@@ -25,10 +25,9 @@
 
 				@*Fecha*@
                 <div class="mb-3">
-                    <label class="form-label">
-                        <strong>Fecha</strong>
-                    </label>
-                    <InputDate class="form-control" @bind-Value="Aporte.Fecha" />
+                    <label class="form-label"><strong>Fecha Actual</strong></label>
+                    <InputDate class="form-control" @bind-Value="Aporte.Fecha" readonly />
+                    <ValidationMessage For="(() => Aporte.Fecha)" />
                 </div>
 
                 @*Nombres*@
@@ -39,6 +38,7 @@
                         <ValidationMessage For="(() => Aporte.Nombre)" />
                     </label>
                 </div>
+
                 @*Monto*@
                 <div class="mb-3">
                     <label class="form-label">
@@ -69,7 +69,12 @@
     Aportes Aportes = new Aportes();
     private string AporteExistente = "";
     private Aportes Aporte { get; set; } = new Aportes();
+    public DateTime Fecha { get; set; } = DateTime.Now;
 
+	protected override void OnInitialized()
+	{
+		Aporte.Fecha = Fecha;
+	}
     private async Task Guardar()
     {
         var aportes = await aportesServices.Listar(t => t.Nombre == Aporte.Nombre);
