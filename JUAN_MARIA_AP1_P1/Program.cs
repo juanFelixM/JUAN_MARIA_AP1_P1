@@ -1,10 +1,22 @@
 using JUAN_MARIA_AP1_P1.Components;
+using JUAN_MARIA_AP1_P1.DAL;
+using JUAN_MARIA_AP1_P1.Services;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+// Obtenemos el ConStr para usarlo en el contexto
+var ConStr = builder.Configuration.GetConnectionString("NpgsqlConStr");
+
+// agregamos el contexto al builder con el ConStr
+builder.Services.AddDbContextFactory<Contexto>(o => o.UseNpgsql(ConStr));
+
+//Inyeccion del service
+builder.Services.AddScoped<AporteServices>();
 
 var app = builder.Build();
 
