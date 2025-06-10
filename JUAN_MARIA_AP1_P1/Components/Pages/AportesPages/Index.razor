@@ -1,18 +1,20 @@
-﻿@page "/Registro" 
+﻿@page "/Aporte/Index"
+@inject AporteServices aportesServices
+@inject NavigationManager navigationManager
 @rendermode InteractiveServer
 
-<PageTitle>Lista de Registro</PageTitle>
+<PageTitle>Lista de Aporte</PageTitle>
 <div class="container">
     <div class="card shadow-lg">
         <div class="card-header text-center bg-primary text-white">
             <h5 class="card-title text-center">
-                <strong>Consulta de Registro</strong>
+                <strong>Consulta de Aportes</strong>
             </h5>
         </div>
 
         <div class="card-body">
             <div class="d-flex justify-content-end mb-2">
-                <a href="/Create" class="btn btn-success"><span class="bi bi-plus-square"></span> Crear</a>
+                <a href="/Aporte/Create" class="btn btn-success"><span class="bi bi-plus-square"></span> Crear</a>
             </div>
 
             <div class="row">
@@ -45,13 +47,33 @@
             </div>
 
 
+
             <table class="table table-striped table-hover table-bordered mt-4">
                 <thead class="table text-black">
                     <tr>
-                        <th>ID</th>
+                        <th>Aporte Id</th>
+                        <th>Fecha</th>
+                        <th>Nombres</th>
+                        <th>Monto</th>
                     </tr>
                 </thead>
                 <tbody>
+
+                    @foreach (var aporte in aportes)
+                    {
+                        <tr>
+                            @*Detalles*@
+                            <td>@(aporte.AporteId)</td>
+                            <td>@(aporte.Fecha.ToShortDateString())</td>
+                            <td>@(aporte.Nombre)</td>
+                            <td>@(aporte.Monto.ToString("M"))</td>
+
+                            @*Editar*@
+                            <td>
+                                <a href="/Aporte/Edit/@aporte.AporteId" class="btn btn-outline-success bi bi-pencil-square"></a>
+                            </td>
+                        </tr>
+                    }
                 </tbody>
             </table>
         </div>
@@ -59,6 +81,7 @@
 </div>
 
 @code {
+    private List<Aportes> aportes = new();
 
     public DateTime Desde { get; set; }
     public DateTime Hasta { get; set; }
@@ -67,7 +90,6 @@
 
     private async Task Buscar()
     {
-
 
     }
 }
