@@ -59,19 +59,15 @@
                     </tr>
                 </thead>
                 <tbody>
-
-                    @foreach (var aporte in aportes)
+                    @foreach (var aporte in listaportes)
                     {
                         <tr>
-                            @*Detalles*@
-                            <td>@(aporte.AporteId)</td>
-                            <td>@(aporte.Fecha.ToShortDateString())</td>
-                            <td>@(aporte.Nombre)</td>
-                            <td>@(aporte.Monto.ToString("M"))</td>
-                            
-                            @*Editar*@
-                            <td>
-                                <a href="/Aporte/Edit/@aporte.AporteId" class="btn btn-outline-success bi bi-pencil-square"></a>
+                            <td>@aporte.AporteId</td>
+                            <td>@aporte.Fecha.ToString("dd/MM/yyyy")</td>
+                            <td>@aporte.Nombre</td>
+                            <td>@aporte.Monto</td>
+                            <td class="text-center">
+                                <a href="/Aporte/Edit/@aporte.AporteId" class="btn btn-outline-primary bi bi-pencil-square"></a>
                             </td>
                         </tr>
                     }
@@ -82,12 +78,19 @@
 </div>
 
 @code {
-    private List<Aportes> aportes = new();
+
+    public List<Aportes> listaportes { get; set; } = new List<Aportes>();
 
     public DateTime Desde { get; set; }
     public DateTime Hasta { get; set; }
     public string Filtro { get; set; } = null;
     public string ValorFiltro { get; set; } = null;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        listaportes = await aportesServices.Listar(a => a.AporteId > 0);
+    }
 
     private async Task Buscar()
     {
