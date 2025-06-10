@@ -55,6 +55,7 @@
                         <th>Fecha</th>
                         <th>Nombres</th>
                         <th>Monto</th>
+                        <th>Editar</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -67,7 +68,7 @@
                             <td>@(aporte.Fecha.ToShortDateString())</td>
                             <td>@(aporte.Nombre)</td>
                             <td>@(aporte.Monto.ToString("M"))</td>
-
+                            
                             @*Editar*@
                             <td>
                                 <a href="/Aporte/Edit/@aporte.AporteId" class="btn btn-outline-success bi bi-pencil-square"></a>
