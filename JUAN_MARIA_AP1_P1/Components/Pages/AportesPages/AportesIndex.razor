@@ -76,6 +76,14 @@
                     }
                 </tbody>
             </table>
+            <div class="d-flex justify-content-between">
+                <div>
+                    <strong>Conteo: </strong> @Conteo
+                </div>
+                <div>
+                    <strong>Total: </strong> @Total.ToString("C")
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -88,11 +96,13 @@
     public DateTime? Hasta { get; set; }
     public string? Filtro { get; set; } = null;
     public string? ValorFiltro { get; set; } = null;
-
+    public double Total { get; set; }
+    public int Conteo { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         listaportes = await aportesServices.Listar(a => a.AporteId > 0);
+		CalculoTotal(); 
     }
 
     private async Task Buscar()
@@ -118,5 +128,10 @@
             lista = lista.Where(r => r.Fecha <= Hasta.Value).ToList();
 
         listaportes = lista;
+    }
+    private void CalculoTotal()
+    {
+        Total = listaportes.Sum(a => a.Monto);
+        Conteo = listaportes.Select(a => a.Nombre).Distinct().Count();
     }
 }
