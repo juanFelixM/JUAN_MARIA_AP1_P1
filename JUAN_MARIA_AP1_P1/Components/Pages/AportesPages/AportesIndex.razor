@@ -1,4 +1,5 @@
 ﻿@page "/Aporte/Index"
+@using System.Linq.Expressions
 @inject AporteServices aportesServices
 @inject NavigationManager navigationManager
 @rendermode InteractiveServer
@@ -23,6 +24,8 @@
                     <label class="col-form-label"><strong>Filtrar por</strong></label>
                     <InputSelect class="form-select" @bind-Value="Filtro">
                         <option value="" selected disabled>Elija una opci&oacute;n</option>
+						<option value="AporteId">Aporte Id</option>
+						<option value="Nombre">Nombre</option>
                     </InputSelect>
                 </div>
 
@@ -73,6 +76,14 @@
                     }
                 </tbody>
             </table>
+            <div class="d-flex justify-content-between">
+                <div>
+                    <strong>Conteo: </strong> @Conteo
+                </div>
+                <div>
+                    <strong>Total: </strong> @Total.ToString("C")
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -81,19 +92,46 @@
 
     public List<Aportes> listaportes { get; set; } = new List<Aportes>();
 
-    public DateTime Desde { get; set; }
-    public DateTime Hasta { get; set; }
-    public string Filtro { get; set; } = null;
-    public string ValorFiltro { get; set; } = null;
-
+    public DateTime? Desde { get; set; }
+    public DateTime? Hasta { get; set; }
+    public string? Filtro { get; set; } = null;
+    public string? ValorFiltro { get; set; } = null;
+    public double Total { get; set; }
+    public int Conteo { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         listaportes = await aportesServices.Listar(a => a.AporteId > 0);
+		CalculoTotal(); 
     }
 
     private async Task Buscar()
     {
+        Expression<Func<Aportes, bool>> filtroExp = r => r.AporteId > 0;
 
+        if (Filtro == "AporteId")
+        {
+            int id = int.Parse(ValorFiltro);
+            filtroExp = r => r.AporteId == id;
+        }
+        else if (Filtro == "Nombre")
+        {
+            filtroExp = r => r.Nombre != null && r.Nombre.Contains(ValorFiltro);
+        }
+
+        var lista = await aportesServices.Listar(filtroExp);
+
+        if (Desde.HasValue)
+            lista = lista.Where(r => r.Fecha >= Desde.Value).ToList();
+
+        if (Hasta.HasValue)
+            lista = lista.Where(r => r.Fecha <= Hasta.Value).ToList();
+
+        listaportes = lista;
+    }
+    private void CalculoTotal()
+    {
+        Total = listaportes.Sum(a => a.Monto);
+        Conteo = listaportes.Select(a => a.Nombre).Distinct().Count();
     }
 }
